@@ -4,8 +4,19 @@ const errorFormatter = require('../utils/errorFormatter');
 
 exports.getCategories = async (req, res) => {
 	try {
-		const categories = await Category.findAll({ include: [{ model: Video }] });
-		res.status(200).json(categories);
+		const categories = await Category.findAll({
+			attributes: { exclude: ['id'] },
+			include: [
+				{
+					model: Video,
+					attributes: ['title', 'description', 'source_1', 'source_2', 'thumb'],
+					through: {
+						attributes: [],
+					},
+				},
+			],
+		});
+		res.status(200).json({ categories });
 	} catch (error) {
 		res.status(500).send(errorFormatter(error));
 	}
@@ -37,7 +48,7 @@ exports.getOneCategory = async (req, res) => {
 		const category = categories.filter((cat) => {
 			return cat.id == id;
 		});
-		res.status(201).json(category);
+		res.status(200).json(category);
 	} catch (error) {
 		res.status(500).send(errorFormatter(error));
 	}
