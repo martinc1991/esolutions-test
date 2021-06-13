@@ -1,10 +1,22 @@
 const Video = require('../models/Video.js');
 const Category = require('../models/Category.js');
+const errorFormatter = require('../utils/errorFormatter');
 
 exports.getVideos = async (req, res) => {
 	try {
-		const videos = await Video.findAll({ include: [{ model: Category, attributes: ['name'], through: { attributes: [] } }] });
-		res.status(200).json({ count: videos.length, data: videos });
+		const videos = await Video.findAll({
+			include: [
+				{
+					model: Category,
+					attributes: ['id', 'name'],
+					through: { attributes: [] },
+				},
+			],
+		});
+		res.status(200).json({
+			count: videos.length,
+			data: videos,
+		});
 	} catch (error) {
 		res.status(500).send(errorFormatter(error));
 	}
@@ -12,8 +24,8 @@ exports.getVideos = async (req, res) => {
 
 exports.createVideo = async (req, res) => {
 	try {
-		const { title, description, sources, thumb, categories } = req.body;
-		const video = await Video.create({ title, description, sources, thumb });
+		const { title, description, source_1, source_2, thumb, categories } = req.body;
+		const video = await Video.create({ title, description, source_1, source_2, thumb });
 
 		for (const cat in categories) {
 			const category = await Category.findOrCreate({ where: { name: categories[cat] } });
@@ -38,11 +50,19 @@ exports.countVideos = async (req, res) => {
 exports.getOneVideo = async (req, res) => {
 	try {
 		const id = req.params.id;
-		const videos = await Video.findAll({ include: [{ model: Category, attributes: ['name'], through: { attributes: [] } }] });
+		const videos = await Video.findAll({
+			include: [
+				{
+					model: Category,
+					attributes: ['name'],
+					through: { attributes: [] },
+				},
+			],
+		});
 		const video = videos.filter((video) => {
 			return video.id == id;
 		});
-		res.status(201).json(video);
+		res.status(200).json(video);
 	} catch (error) {
 		res.status(500).send(errorFormatter(error));
 	}
@@ -67,9 +87,7 @@ exports.updateVideo = async (req, res) => {
 				await video.addCategory(category[0]);
 			}
 		}
-
 		await video.save();
-
 		res.status(201).json({ status: 'Updated successfully', data: video });
 	} catch (error) {
 		res.status(500).send(errorFormatter(error));
@@ -80,7 +98,6 @@ exports.deleteVideo = async (req, res) => {
 	try {
 		const id = req.params.id;
 		let deletedVideo = await Video.findOne({ where: { id: id } });
-
 		await deletedVideo.destroy();
 		res.status(201).json({ status: 'Removed successfully', data: deletedVideo });
 	} catch (error) {
