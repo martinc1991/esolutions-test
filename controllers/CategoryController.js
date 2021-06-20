@@ -16,7 +16,7 @@ exports.getCategories = async (req, res) => {
 				},
 			],
 		});
-		res.status(200).json({ categories });
+		res.status(200).json({ count: categories.length, data: categories });
 	} catch (error) {
 		res.status(500).send(errorFormatter(error));
 	}
@@ -26,7 +26,7 @@ exports.createCategory = async (req, res) => {
 	try {
 		const name = req.body.name;
 		const category = await Category.create({ name });
-		res.status(201).json({ status: 'success', data: category });
+		res.status(201).json(category);
 	} catch (error) {
 		res.status(500).send(errorFormatter(error));
 	}
@@ -47,8 +47,8 @@ exports.getOneCategory = async (req, res) => {
 		const categories = await Category.findAll({ include: [{ model: Video, attributes: ['title', 'thumb'], through: { attributes: [] } }] });
 		const category = categories.filter((cat) => {
 			return cat.id == id;
-		});
-		res.status(200).json(category);
+		})[0];
+		res.status(200).json({ count: categories.length, data: category });
 	} catch (error) {
 		res.status(500).send(errorFormatter(error));
 	}
@@ -61,7 +61,7 @@ exports.updateCategory = async (req, res) => {
 		const category = await Category.findOne({ where: { id: id } });
 		category.name = name;
 		await category.save();
-		res.status(201).json({ status: 'Updated successfully', data: category });
+		res.status(201).json(category);
 	} catch (error) {
 		res.status(500).send(errorFormatter(error));
 	}
@@ -73,7 +73,7 @@ exports.deleteCategory = async (req, res) => {
 		let deletedCategory = await Category.findOne({ where: { id: id } });
 
 		await deletedCategory.destroy();
-		res.status(201).json({ status: 'Removed successfully', data: deletedCategory });
+		res.status(201).json(deletedCategory);
 	} catch (error) {
 		res.status(500).send(errorFormatter(error));
 	}

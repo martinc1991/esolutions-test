@@ -136,7 +136,13 @@ router.get('/count', videoController.countVideos);
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Video'
+ *              type: object
+ *              properties:
+ *                count:
+ *                  type: integer
+ *                  example: 1
+ *                data:
+ *                  $ref: '#/components/schemas/Video'
  */
 router.get('/:id', videoController.getOneVideo);
 // UPDATE Video

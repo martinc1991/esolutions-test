@@ -61,8 +61,8 @@ exports.getOneVideo = async (req, res) => {
 		});
 		const video = videos.filter((video) => {
 			return video.id == id;
-		});
-		res.status(200).json(video);
+		})[0];
+		res.status(200).json({ count: videos.length, data: video });
 	} catch (error) {
 		res.status(500).send(errorFormatter(error));
 	}
@@ -88,7 +88,7 @@ exports.updateVideo = async (req, res) => {
 			}
 		}
 		await video.save();
-		res.status(201).json({ status: 'Updated successfully', data: video });
+		res.status(201).json(video);
 	} catch (error) {
 		res.status(500).send(errorFormatter(error));
 	}
@@ -99,7 +99,7 @@ exports.deleteVideo = async (req, res) => {
 		const id = req.params.id;
 		let deletedVideo = await Video.findOne({ where: { id: id } });
 		await deletedVideo.destroy();
-		res.status(201).json({ status: 'Removed successfully', data: deletedVideo });
+		res.status(201).json(deletedVideo);
 	} catch (error) {
 		res.status(500).send(errorFormatter(error));
 	}

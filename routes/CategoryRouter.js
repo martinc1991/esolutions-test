@@ -25,7 +25,7 @@ const CategoryController = require('../controllers/CategoryController');
  *         name:
  *           type: string
  *           description: Name of the category
- *           example: Categories
+ *           example: cats
  * */
 
 // GET Categories
@@ -103,7 +103,13 @@ router.get('/count', CategoryController.countCategories);
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Category'
+ *              type: object
+ *              properties:
+ *                count:
+ *                  type: integer
+ *                  example: 1
+ *                data:
+ *                  $ref: '#/components/schemas/Category'
  */
 router.get('/:id', CategoryController.getOneCategory);
 // UPDATE Category
