@@ -46,6 +46,10 @@ Once the API is running, you can access the docs on your browser just typing:
 http://localhost:5000/api-docs/
 ```
 
+## Postman Documentation
+
+If you want to test de API with [Postman](https://www.postman.com/), there's a file in the root named _esolutions-test.postman_collection.json_. You can import that collection and immediately have all the routes to test. If you don't know how to import a collection, here is a [video](https://youtu.be/FzPBDU7cB74?t=86).
+
 ## Testing
 
 To run the automated test, just run:
