@@ -42,11 +42,18 @@ app.use('/categories', CategoryRouter);
 
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
-	console.log('App is running on port', PORT);
+const server =
+	process.env.NODE_ENV === 'test'
+		? app.listen(() => {
+				// Connect to DB
+				sequelize.sync({ force: true }).then(() => {});
+		  })
+		: app.listen(PORT, () => {
+				console.log('App is running on port', PORT);
+				// Connect to DB
+				sequelize.sync({ force: true }).then(() => {
+					console.log('Connected to DB');
+				});
+		  });
 
-	// Connect to DB
-	sequelize.sync({ force: true }).then(() => {
-		console.log('Connected to DB');
-	});
-});
+module.exports = { app, server };
